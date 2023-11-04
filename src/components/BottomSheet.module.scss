@@ -8,6 +8,7 @@
   position: fixed;
   right: 0;
   top: 0;
+  touch-action: none; // prevents `drag to refresh` on mobile
   transition: transform 0.3s ease-in-out;
 
   .header {
@@ -23,7 +24,7 @@
       margin: 0 auto 0.4rem;
       width: 4.5rem;
     }
-    & h5 {
+    & h2 {
       color: #353434;
       font-family: 'Poppins', sans-serif;
       font-size: 1.5rem;
