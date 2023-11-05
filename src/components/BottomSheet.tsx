@@ -4,62 +4,68 @@
         - bottom 25% of the screen: closed
         - between 25% and 60% of the screen: half
         - above 60% of the screen: full
-  - tap events // TODO: decide on functionality - Could go between closed and half only, or closed and full, or cycle through all three positions
-
+  - tapping on the header will open the sheet half way if it's closed or else close it
 */
 
-import { useEffect, useRef, useState } from 'react';
+import useBottomSheetGestures, { Position } from '../hooks/useBottomSheetGestures';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './BottomSheet.module.scss';
-import useBottomSheetDrag from '../hooks/useBottomSheetDrag';
 
 interface IBottomSheet {
   children: React.ReactNode;
   title: string;
 }
 
-/* TODO:
-
-  - [ ] add support for tap events
-  - [ ] refactor
-
-*/
-
 const BottomSheet = ({ children, title }: IBottomSheet) => {
+  const [transformValue, setTransformValue] = useState<string>('');
+
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
   // used to assure we have a headerHeight value before we start using it in `useBottomSheetDrag`
   useEffect(() => {
-    setHeaderHeight(headerRef.current?.clientHeight || 0);
+    setHeaderHeight(headerRef.current?.clientHeight ?? 0);
   }, []);
 
-  const { screenSection, finalPosition, handleTouchStart, handleTouchMove, handleTouchEnd } =
-    useBottomSheetDrag(headerHeight);
-  const [transformValue, setTransformValue] = useState<string>('');
+  const {
+    finalPosition,
+    handleTouchEnd,
+    handleTouchMove,
+    handleTouchStart,
+    touchLocationPercentage,
+    handleClick,
+  } = useBottomSheetGestures(headerHeight);
+
+  const updateTransformValue = useCallback(
+    (touchLocationPercentage: number) => {
+      switch (finalPosition) {
+        case Position.CLOSED:
+          setTransformValue('93%');
+          break;
+        case Position.HALF:
+          setTransformValue('100%');
+          break;
+        case Position.FULL:
+          setTransformValue('0');
+          break;
+        default:
+          setTransformValue(`${100 - touchLocationPercentage}%`);
+          break;
+      }
+    },
+    [finalPosition],
+  );
 
   useEffect(() => {
-    switch (finalPosition) {
-      case 'closed':
-        setTransformValue('93%');
-        break;
-      case 'half':
-        setTransformValue('100%');
-        break;
-      case 'full':
-        setTransformValue('0');
-        break;
-      default:
-        setTransformValue(`${100 - screenSection}%`);
-        break;
-    }
-  }, [finalPosition, screenSection]);
+    updateTransformValue(touchLocationPercentage);
+  }, [finalPosition, touchLocationPercentage, updateTransformValue]);
 
   const bottomSheetStyle = {
-    height: finalPosition === 'half' ? '50%' : '100%',
+    // TODO: the bottom sheet jumps around the half position
+    height: finalPosition === Position.HALF ? '50%' : '100%',
     transform: `translateY(${transformValue})`,
-    transition: 'transform 0.05s ease-out',
-    borderTopLeftRadius: finalPosition === 'full' ? '0' : '2.5rem',
-    borderTopRightRadius: finalPosition === 'full' ? '0' : '2.5rem',
+    borderTopLeftRadius: finalPosition === Position.FULL ? '0' : '2.5rem',
+    borderTopRightRadius: finalPosition === Position.FULL ? '0' : '2.5rem',
   };
 
   return (
@@ -70,11 +76,12 @@ const BottomSheet = ({ children, title }: IBottomSheet) => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onClick={handleClick}
       >
         <div className={styles.handle} />
         <h2>{title}</h2>
       </div>
-      {finalPosition !== 'closed' && (
+      {finalPosition !== Position.CLOSED && (
         // divide by 10 to convert px to rem (1rem = 10px)
         <div className={styles.content} style={{ height: `calc(100% - ${headerHeight / 10}rem)` }}>
           {children}

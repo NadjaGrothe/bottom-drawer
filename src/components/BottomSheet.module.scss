@@ -6,7 +6,7 @@
   right: 0;
   top: 0;
   touch-action: none; // prevents `drag to refresh` on mobile
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.1s ease-out;
 
   .header {
     padding-top: 1.5rem;
@@ -35,7 +35,7 @@
     overscroll-behavior: contain; // prevents `drag to refresh` on mobile
     padding-bottom: 3rem;
 
-    // * remove vertical scrollbar
+    //  remove vertical scrollbar
     scrollbar-width: none; // Firefox
     -ms-overflow-style: none; // IE 10+
     &::-webkit-scrollbar {
