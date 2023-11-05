@@ -9,12 +9,11 @@
 
 */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styles from './BottomSheet.module.scss';
-import useGesture from '../hooks/useGesture';
+import useBottomSheetDrag from '../hooks/useBottomSheetDrag';
 
-type TSnapPoints = 'closed' | 'half' | 'full';
 interface IBottomSheet {
   children: React.ReactNode;
   title: string;
@@ -29,36 +28,55 @@ interface IBottomSheet {
 */
 
 const BottomSheet = ({ children, title }: IBottomSheet) => {
-  const [sheetPosition, setSheetPosition] = useState<TSnapPoints>('closed');
-  const { handleTouchStart, handleTouchMove, handleTouchEnd, direction } = useGesture();
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+  // used to assure we have a headerHeight value before we start using it in `useBottomSheetDrag`
+  useEffect(() => {
+    setHeaderHeight(headerRef.current?.clientHeight || 0);
+  }, []);
+  
+  const { screenSection, finalPosition, handleTouchStart, handleTouchMove, handleTouchEnd } =
+    useBottomSheetDrag(headerHeight);
+  const [transformValue, setTransformValue] = useState<string>('');
 
   useEffect(() => {
-    if (direction === 'up') {
-      if (sheetPosition === 'closed') {
-        setSheetPosition('half');
-      } else if (sheetPosition === 'half') {
-        setSheetPosition('full');
-      }
-    } else if (direction === 'down') {
-      if (sheetPosition === 'full') {
-        setSheetPosition('half');
-      } else setSheetPosition('closed');
+    switch (finalPosition) {
+      case 'closed':
+        setTransformValue('93%');
+        break;
+      case 'half':
+        setTransformValue('50%');
+        break;
+      case 'full':
+        setTransformValue('0');
+        break;
+      default:
+        setTransformValue(`${100 - screenSection}%`);
+        break;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [direction]);
+  }, [finalPosition, screenSection]);
+
+
+  const bottomSheetStyle = {
+    transform: `translateY(${transformValue})`,
+    transition: 'transform 0.05s ease-out',
+    borderTopLeftRadius: finalPosition === 'full' ? '0' : '2.5rem',
+    borderTopRightRadius: finalPosition === 'full' ? '0' : '2.5rem',
+  };
 
   return (
     <div
-      className={`${styles.bottomSheet} ${styles[sheetPosition]}`}
+      className={styles.bottomSheet}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={bottomSheetStyle}
     >
-      <div className={styles.header}>
+      <div className={styles.header} ref={headerRef}>
         <div className={styles.handle} />
         <h2>{title}</h2>
       </div>
-      {sheetPosition !== 'closed' && <div className="bottom-sheet__content">{children}</div>}
+      {finalPosition !== 'closed' && <div className="bottom-sheet__content">{children}</div>}
     </div>
   );
 };

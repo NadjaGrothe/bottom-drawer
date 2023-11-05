@@ -1,7 +1,5 @@
 .bottomSheet {
   background-color: white;
-  border-top-left-radius: 2rem;
-  border-top-right-radius: 2.5rem;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
   height: 100%;
   left: 0;
@@ -31,18 +29,4 @@
       font-weight: 500;
     }
   }
-}
-
-.closed {
-  transform: translateY(93%);
-}
-
-.half {
-  transform: translateY(50%);
-}
-
-.full {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  transform: translateY(0);
 }

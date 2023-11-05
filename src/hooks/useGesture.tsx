@@ -2,7 +2,7 @@
 // - swipe: a quick, short movement in a single direction
 // - drag: a slow, long movement in a single direction
 
-/* TODO:
+/* TODO: DELETE THIS FILE
 
   - [ ] add support for drag events
   - [ ] consider adding a threshold for swipe events
