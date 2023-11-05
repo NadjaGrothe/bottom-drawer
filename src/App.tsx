@@ -38,7 +38,7 @@ function App() {
               return <Card key={card} />;
             }
           })}
-          {isLoading && <div className="loading">Loading...</div>}
+          {isLoading && <div>Loading...</div>}
         </div>
       </BottomSheet>
     </>
