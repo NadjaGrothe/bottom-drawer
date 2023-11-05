@@ -1,15 +1,14 @@
 import './App.css';
 
 import BottomSheet from './components/BottomSheet';
+import Card from './components/Card';
 
 /* //TODO:
-- Create a Card component to display inside the BottomSheet
-  - 50px height and any background color
-- Create an Array of 100 and map over it to render 100 Cards
-- Assure that the BottomSheet is scrollable
+- lazy load cards
+- implement tap event on BottomSheet
+- improve BottomSheet drag animation (jumps a little when dragging)
 - write tests
 - refactor
-- Deploy & share repo
 
 Bonus:
 - Add additional styling (App background, Card, BottomSheet, animations)
@@ -17,11 +16,17 @@ Bonus:
 */
 
 function App() {
+  const noOfCards = Array.from(Array(100).keys());
+
   return (
     <>
       <h1>Bottom Sheet</h1>
       <BottomSheet title="1900+ homes available in Orlando">
-        <p>Bottom Sheet Content</p>
+        <div className='bottomSheet-content'>
+          {noOfCards.map(card => (
+            <Card key={card} />
+          ))}
+        </div>
       </BottomSheet>
     </>
   );

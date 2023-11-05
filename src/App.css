@@ -5,3 +5,9 @@
   padding: 2rem;
   text-align: center;
 }
+
+.bottomSheet-content {
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+}

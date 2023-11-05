@@ -29,4 +29,17 @@
       font-weight: 500;
     }
   }
+
+  .content {
+    margin: 1rem 2rem;
+    overflow: auto;
+    overscroll-behavior: contain; // prevents `drag to refresh` on mobile
+    
+    // * remove vertical scrollbar
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE 10+
+    &::-webkit-scrollbar {
+      display: none; // Safari, Chrome & Opera
+    }
+  }
 }
