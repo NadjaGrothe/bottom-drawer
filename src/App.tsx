@@ -1,9 +1,8 @@
 import './App.css';
 
-import { useCallback, useRef, useState } from 'react';
-
 import BottomSheet from './components/BottomSheet';
 import Card from './components/Card';
+import useLazyLoading from './hooks/useLazyLoading';
 
 /* //TODO:
 - implement tap event on BottomSheet
@@ -16,32 +15,16 @@ Bonus:
 - Write Documentation
 */
 
+const CARD_BATCH_SIZE = 5;
+const MAX_CARDS = 100;
+const LOAD_DELAY_MS = 1000;
+
 function App() {
-  // * Logic to simulate lazy loading
-  const [cards, setCards] = useState(Array.from(Array(5).keys()));
-  const [isLoading, setIsLoading] = useState(false);
-
-  const observer = useRef<IntersectionObserver | null>(null);
-
-  const lastCardRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (isLoading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting) {
-          setIsLoading(true);
-          setTimeout(() => {
-            if (cards.length < 100) {
-              setCards(prevCards => [...prevCards, ...Array.from(Array(5).keys())]);
-            }
-            setIsLoading(false);
-          }, 1000);
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [isLoading, cards.length],
-  ); 
+  const { cards, isLoading, lastCardRef } = useLazyLoading(
+    MAX_CARDS,
+    CARD_BATCH_SIZE,
+    LOAD_DELAY_MS,
+  );
 
   return (
     <>
