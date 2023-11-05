@@ -43,7 +43,7 @@ const BottomSheet = ({ children, title }: IBottomSheet) => {
         setTransformValue('93%');
         break;
       case 'half':
-        setTransformValue('50%');
+        setTransformValue('100%');
         break;
       case 'full':
         setTransformValue('0');
@@ -55,6 +55,7 @@ const BottomSheet = ({ children, title }: IBottomSheet) => {
   }, [finalPosition, screenSection]);
 
   const bottomSheetStyle = {
+    height: finalPosition === 'half' ? '50%' : '100%',
     transform: `translateY(${transformValue})`,
     transition: 'transform 0.05s ease-out',
     borderTopLeftRadius: finalPosition === 'full' ? '0' : '2.5rem',
@@ -62,10 +63,7 @@ const BottomSheet = ({ children, title }: IBottomSheet) => {
   };
 
   return (
-    <div
-      className={styles.bottomSheet}
-      style={bottomSheetStyle}
-    >
+    <div className={styles.bottomSheet} style={bottomSheetStyle}>
       <div
         className={styles.header}
         ref={headerRef}
@@ -78,7 +76,7 @@ const BottomSheet = ({ children, title }: IBottomSheet) => {
       </div>
       {finalPosition !== 'closed' && (
         // divide by 10 to convert px to rem (1rem = 10px)
-        <div className={styles.content} style={{ height: `calc(100% - ${headerHeight /10}rem)` }}>
+        <div className={styles.content} style={{ height: `calc(100% - ${headerHeight / 10}rem)` }}>
           {children}
         </div>
       )}
