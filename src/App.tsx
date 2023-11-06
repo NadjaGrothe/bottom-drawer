@@ -4,17 +4,6 @@ import BottomSheet from './components/BottomSheet';
 import Card from './components/Card';
 import useLazyLoading from './hooks/useLazyLoading';
 
-/* //TODO:
-- implement tap event on BottomSheet
-- improve BottomSheet drag animation (jumps a little when dragging)
-- write tests
-- refactor
-
-Bonus:
-- Add additional styling (App background, Card, BottomSheet, animations)
-- Write Documentation
-*/
-
 const CARD_BATCH_SIZE = 5;
 const MAX_CARDS = 100;
 const LOAD_DELAY_MS = 1000;
